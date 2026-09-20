@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <EmbeddedBlocks.h>
 
-eb::PWMLed led(9);
+eb::Led led(9);
 
 
 void setup()
@@ -12,10 +12,7 @@ void setup()
 
 void loop()
 {
-    led.setBrightness(100);
     led.toggle();
-    delay(1000);
-    led.setBrightness(5);
     delay(1000);
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <EmbeddedBlocks/core/PWM.h>
 
 namespace eb
 {
@@ -16,10 +17,12 @@ namespace eb
         void setBrightness(uint8_t brightness);
         uint8_t getBrightness();
 
+        static constexpr uint32_t PWM_MAX = 255;
+
     private:
-        uint8_t m_redPin;
-        uint8_t m_greenPin;
-        uint8_t m_bluePin;
+        PWM m_red;
+        PWM m_green;
+        PWM m_blue;
         uint32_t m_Rvalue;
         uint32_t m_Gvalue;
         uint32_t m_Bvalue;

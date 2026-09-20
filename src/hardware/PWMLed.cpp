@@ -4,15 +4,17 @@
 namespace eb
 {
 
-    eb::PWMLed::PWMLed(uint8_t pin)
+    eb::PWMLed::PWMLed(uint8_t pin):
+        m_pwm(pin),
+        m_state(false),
+        m_brightness(100)
+        
     {
-        m_pin = pin;
-        m_state = false;
-        m_brightness = 100;
+
     }
     void PWMLed::begin()
     {
-        pinMode(m_pin, OUTPUT);
+        m_pwm.begin();
         off();
     }
     void PWMLed::setBrightness(uint8_t brightness)
@@ -29,8 +31,8 @@ namespace eb
 
         if (m_state)
         {
-            uint32_t pwmValue = (m_brightness * PWM_MAX()) / 100;
-            analogWrite(m_pin, pwmValue);
+            uint32_t pwmValue = (m_brightness * 255) / 100;
+            m_pwm.write(pwmValue);
         }
     }
     void PWMLed::on()
@@ -42,7 +44,7 @@ namespace eb
     void PWMLed::off()
     {
         m_state = false;
-        analogWrite(m_pin, 0);
+        m_pwm.write(0);
     }
 
     void PWMLed::toggle()
