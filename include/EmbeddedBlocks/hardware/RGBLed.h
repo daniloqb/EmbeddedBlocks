@@ -13,8 +13,10 @@ namespace eb
         void off();
         void toggle();
 
-        void setColor(uint32_t red, uint32_t green, uint32_t blue);
+        void setHue(uint16_t hue);
+        void setColor(uint8_t red, uint8_t green, uint8_t blue);
         void setBrightness(uint8_t brightness);
+        void setSaturation(uint8_t saturation);
         uint8_t getBrightness();
 
         static constexpr uint32_t PWM_MAX = 255;
@@ -23,10 +25,17 @@ namespace eb
         PWM m_red;
         PWM m_green;
         PWM m_blue;
-        uint32_t m_Rvalue;
-        uint32_t m_Gvalue;
-        uint32_t m_Bvalue;
+        uint8_t m_Rvalue;
+        uint8_t m_Gvalue;
+        uint8_t m_Bvalue;
         uint8_t m_brightness;
+        uint8_t m_saturation;
+        uint16_t m_hue;
         bool m_state;
+
+    private:
+        void applyColor();
+        void updateColorFromHSV();
+        uint16_t rgbToHue(uint8_t red, uint8_t green, uint8_t blue);
     };
 }
