@@ -1,10 +1,10 @@
-#include <EmbeddedBlocks/hardware/PWMLed.h>
+#include <EmbeddedBlocks/hardware/LedPWM.h>
 #include <Arduino.h>
 
 namespace eb
 {
 
-    eb::PWMLed::PWMLed(uint8_t pin):
+    LedPWM::LedPWM(uint8_t pin):
         m_pwm(pin),
         m_state(false),
         m_brightness(100)
@@ -12,12 +12,12 @@ namespace eb
     {
 
     }
-    void PWMLed::begin()
+    void LedPWM::begin()
     {
         m_pwm.begin();
         off();
     }
-    void PWMLed::setBrightness(uint8_t brightness)
+    void LedPWM::setBrightness(uint8_t brightness)
     {
 
         if (brightness > 100)
@@ -35,19 +35,19 @@ namespace eb
             m_pwm.write(pwmValue);
         }
     }
-    void PWMLed::on()
+    void LedPWM::on()
     {
         m_state = true;
         setBrightness(m_brightness);
     }
 
-    void PWMLed::off()
+    void LedPWM::off()
     {
         m_state = false;
         m_pwm.write(0);
     }
 
-    void PWMLed::toggle()
+    void LedPWM::toggle()
     {
         if (m_state)
         {

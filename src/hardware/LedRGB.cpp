@@ -1,11 +1,11 @@
-#include <EmbeddedBlocks/hardware/RGBLed.h>
+#include <EmbeddedBlocks/hardware/LedRGB.h>
 #include <Arduino.h>
 #include <math.h>
 
 namespace eb
 {
 
-    RGBLed::RGBLed(uint8_t redPin, uint8_t greenPin, uint8_t bluePin)
+    LedRGB::LedRGB(uint8_t redPin, uint8_t greenPin, uint8_t bluePin)
         : m_red(redPin),
           m_green(greenPin),
           m_blue(bluePin),
@@ -19,7 +19,7 @@ namespace eb
     {
     }
 
-    void RGBLed::begin()
+    void LedRGB::begin()
     {
         m_red.begin();
         m_green.begin();
@@ -32,7 +32,7 @@ namespace eb
     // RGB
     // ---------------------------------------------------------
 
-    void RGBLed::setColor(uint8_t red, uint8_t green, uint8_t blue)
+    void LedRGB::setColor(uint8_t red, uint8_t green, uint8_t blue)
     {
         m_Rvalue = red;
         m_Gvalue = green;
@@ -49,7 +49,7 @@ namespace eb
     // HUE
     // ---------------------------------------------------------
 
-    void RGBLed::setHue(uint16_t hue)
+    void LedRGB::setHue(uint16_t hue)
     {
         // Garante o comportamento circular:
         // 360 -> 0
@@ -64,7 +64,7 @@ namespace eb
     // SATURATION
     // ---------------------------------------------------------
 
-    void RGBLed::setSaturation(uint8_t saturation)
+    void LedRGB::setSaturation(uint8_t saturation)
     {
         m_saturation = constrain(saturation, 0, 100);
 
@@ -77,7 +77,7 @@ namespace eb
     // BRIGHTNESS
     // ---------------------------------------------------------
 
-    void RGBLed::setBrightness(uint8_t brightness)
+    void LedRGB::setBrightness(uint8_t brightness)
     {
         m_brightness = constrain(brightness, 0, 100);
 
@@ -86,7 +86,7 @@ namespace eb
         applyColor();
     }
 
-    uint8_t RGBLed::getBrightness()
+    uint8_t LedRGB::getBrightness()
     {
         return m_brightness;
     }
@@ -95,21 +95,21 @@ namespace eb
     // ON / OFF
     // ---------------------------------------------------------
 
-    void RGBLed::on()
+    void LedRGB::on()
     {
         m_state = true;
 
         applyColor();
     }
 
-    void RGBLed::off()
+    void LedRGB::off()
     {
         m_state = false;
 
         applyColor();
     }
 
-    void RGBLed::toggle()
+    void LedRGB::toggle()
     {
         if (m_state)
         {
@@ -129,7 +129,7 @@ namespace eb
     // HSV -> RGB
     // ---------------------------------------------------------
 
-    void RGBLed::updateColorFromHSV()
+    void LedRGB::updateColorFromHSV()
     {
         float r;
         float g;
@@ -211,7 +211,7 @@ namespace eb
     // Envia a cor para o hardware
     // ---------------------------------------------------------
 
-    void RGBLed::applyColor()
+    void LedRGB::applyColor()
     {
         if (!m_state)
         {
@@ -239,7 +239,7 @@ namespace eb
     // RGB -> HUE
     // ---------------------------------------------------------
 
-    uint16_t RGBLed::rgbToHue(
+    uint16_t LedRGB::rgbToHue(
         uint8_t red,
         uint8_t green,
         uint8_t blue)
@@ -288,6 +288,12 @@ namespace eb
         }
 
         return static_cast<uint16_t>(hue);
+    }
+
+    void LedRGB::randomHue()
+    {
+        uint16_t hue = static_cast<uint16_t>(random(0, 361));
+        setHue(hue);
     }
 
 }

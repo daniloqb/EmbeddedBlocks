@@ -4,10 +4,10 @@
 
 namespace eb
 {
-    class PWMLed
+    class LedPWM
     {
     public:
-        explicit PWMLed(uint8_t pin);
+        explicit LedPWM(uint8_t pin);
         void begin();
         // void update();
 

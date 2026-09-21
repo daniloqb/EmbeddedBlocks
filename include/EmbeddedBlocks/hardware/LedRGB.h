@@ -4,10 +4,10 @@
 
 namespace eb
 {
-    class RGBLed
+    class LedRGB
     {
     public:
-        explicit RGBLed(uint8_t redPin, uint8_t greenPin, uint8_t bluePin);
+        explicit LedRGB(uint8_t redPin, uint8_t greenPin, uint8_t bluePin);
         void begin();
         void on();
         void off();
@@ -17,6 +17,7 @@ namespace eb
         void setColor(uint8_t red, uint8_t green, uint8_t blue);
         void setBrightness(uint8_t brightness);
         void setSaturation(uint8_t saturation);
+        void randomHue();
         uint8_t getBrightness();
 
         static constexpr uint32_t PWM_MAX = 255;
