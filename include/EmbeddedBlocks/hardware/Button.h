@@ -36,27 +36,28 @@ namespace eb
         void update();
         ButtonState getState() const { return m_state; }
         ButtonEvent getEvent();
-        bool isPressed() const { return m_state == ButtonState::DOWN || m_state == ButtonState::HELD; }
-
-    public:
-        ButtonEvent m_eventClick = ButtonEvent::NONE;
-        ButtonEvent getEventClick();
+        ButtonEvent getGestureEvent();
 
     private:
         uint8_t m_pin;
         ButtonConfig m_config;
-        ButtonState m_state = ButtonState::UP;
         bool m_lastReading = false;
         uint32_t m_lastStateChange = 0;
         uint32_t m_heldStart = 0;
-        static const uint32_t m_heldThreshold = 1000;   // Time in milliseconds to consider the button held
-        static const uint32_t m_debounceThreshold = 30; // Time in milliseconds for debounce
+        
+        ButtonState m_state = ButtonState::UP;
+        ButtonState m_previousState = ButtonState::UP;
+        ButtonEvent m_gestureEvent = ButtonEvent::NONE;
         ButtonEvent m_event = ButtonEvent::NONE;
 
+        static const uint32_t m_clickThreshold = 250; // Time in milliseconds to consider a click
+        static const uint32_t m_doubleClickThreshold = 250; // Time in milliseconds to consider a double click
+        static const uint32_t m_heldThreshold = 1000;   // Time in milliseconds to consider the button held
+        static const uint32_t m_debounceThreshold = 30; // Time in milliseconds for debounce
+
     private:
-        uint8_t m_clickCount = 0;
-        static const uint32_t m_clickThreshold = 300; // Time in milliseconds to consider a click
-        static const uint32_t m_doubleClickThreshold = 300; // Time in milliseconds to consider a double click
-        uint32_t m_lastClickTime = 0; // Time of the last click
+        bool m_clickPending = false;
+        bool m_secondClickCandidate = false;
+        uint32_t m_firstClickReleaseTime = 0; // Time of the last click
     };
 }

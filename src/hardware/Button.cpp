@@ -4,8 +4,8 @@
 namespace eb
 {
     Button::Button(uint8_t pin, ButtonConfig config)
-        : m_pin(pin), m_config(config), m_lastReading(false), m_state(ButtonState::UP),
-          m_lastStateChange(0), m_heldStart(0), m_event(ButtonEvent::NONE), m_clickCount(0), m_lastClickTime(0), m_eventClick(ButtonEvent::NONE)
+        : m_pin(pin), m_config(config), m_lastReading(false), 
+          m_lastStateChange(0), m_heldStart(0), m_state(ButtonState::UP), m_gestureEvent(ButtonEvent::NONE), m_event(ButtonEvent::NONE)
     {
     }
 
@@ -44,7 +44,6 @@ namespace eb
             return;
         }
 
-        // Update the button state based on the last stable reading
         // m_state = m_lastState ? ButtonState::DOWN : ButtonState::UP;
         if (m_state == ButtonState::HELD && m_lastReading) // if the button is held and still being pressed, do nothing
             return;
@@ -52,41 +51,49 @@ namespace eb
         // Update the button state if it has changed
         if (m_state != (m_lastReading ? ButtonState::DOWN : ButtonState::UP))
         {
+            m_previousState = m_state;
             m_state = m_lastReading ? ButtonState::DOWN : ButtonState::UP;                           // update the button state based on the last stable reading
             m_event = (m_state == ButtonState::DOWN) ? ButtonEvent::PRESSED : ButtonEvent::RELEASED; // set the event based on the new state
 
             // If the button is now down, record the time it was pressed. Start the held timer.
             if (m_state == ButtonState::DOWN)
             {
-                m_heldStart = millis();
-                m_lastClickTime = millis(); // record the time of the last click
-                m_clickCount++;             // increment the click count
+                uint32_t currentTime = millis();
+                m_heldStart = currentTime;
+
+                if (m_clickPending)
+                {
+                    if (currentTime - m_firstClickReleaseTime <= m_doubleClickThreshold)
+                    {
+                        m_secondClickCandidate = true;
+                    }
+                    else
+                    {
+                        m_gestureEvent = eb::ButtonEvent::CLICK;
+                        m_clickPending = false;
+                    }
+                }
             }
             else
             {
                 // Check for click and double click events
                 if (m_state == ButtonState::UP)
                 {
-                    uint32_t now = millis();
-           
-                    if (now - m_lastClickTime <= m_clickThreshold)
+                    if (m_previousState == ButtonState::DOWN)
                     {
-                        if (m_clickCount == 1)
+
+                        if (m_secondClickCandidate)
                         {
-                            m_eventClick = eb::ButtonEvent::CLICK; // Set the click event
-                            
+                            m_gestureEvent = eb::ButtonEvent::DOUBLE_CLICK;
+                            m_clickPending = false;
+                            m_secondClickCandidate = false;
                         }
-                        else if (m_clickCount == 2)
+                        else
                         {
-                            m_eventClick = eb::ButtonEvent::DOUBLE_CLICK; // Set the double click event
-                            m_clickCount = 0;                     // Reset click count after double click
+                            m_clickPending = true;
+                            m_firstClickReleaseTime = millis();
                         }
-                    }else
-                    {
-                        m_clickCount = 0; // Reset click count if the click threshold has passed
-                        m_eventClick = eb::ButtonEvent::LONG_CLICK; // Reset the click event if the click threshold has passed
                     }
-          
                 }
             }
         }
@@ -96,13 +103,20 @@ namespace eb
             if (m_state == ButtonState::DOWN && (millis() - m_heldStart >= m_heldThreshold))
             {
                 m_event = eb::ButtonEvent::HELD_START;
+                m_previousState = m_state;
                 m_state = ButtonState::HELD;
+
+                m_clickPending = false;
+                m_gestureEvent = eb::ButtonEvent::LONG_CLICK;
+                m_firstClickReleaseTime = 0;
+                m_secondClickCandidate = false;
             }
         }
-        // Reset click count if the click threshold has passed
-        if ( millis() - m_lastClickTime > m_clickThreshold)
+
+        if (m_clickPending && (millis() - m_firstClickReleaseTime > m_doubleClickThreshold))    
         {
-            m_clickCount = 0;
+            m_gestureEvent = eb::ButtonEvent::CLICK;
+            m_clickPending = false;
         }
     }
 
@@ -113,10 +127,10 @@ namespace eb
         return event;
     }
 
-    eb::ButtonEvent Button::getEventClick()
+    eb::ButtonEvent Button::getGestureEvent()
     {
-        eb::ButtonEvent event = m_eventClick;
-        m_eventClick = eb::ButtonEvent::NONE; // Reset the click event after reading it
+        eb::ButtonEvent event = m_gestureEvent;
+        m_gestureEvent = eb::ButtonEvent::NONE; // Reset the click event after reading it
         return event;
     }
 

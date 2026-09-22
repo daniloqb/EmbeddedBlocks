@@ -23,7 +23,7 @@ void loop()
 {
 
     button.update();
-    buttonEvent = button.getEventClick();
+    buttonEvent = button.getGestureEvent();
     switch ((buttonEvent))
     {
     case eb::ButtonEvent::CLICK:
