@@ -23,23 +23,39 @@ void loop()
 {
 
     button.update();
-
-    buttonEvent = button.getEvent();
-    
-    switch (buttonEvent)
+    buttonEvent = button.getEventClick();
+    switch ((buttonEvent))
     {
-        case eb::ButtonEvent::PRESSED:
-            Serial.println("PRESSED");
-            break;
-        case eb::ButtonEvent::RELEASED:
-            Serial.println("RELEASED");
-            break;
-        case eb::ButtonEvent::HELD_START:
-            Serial.println("HELD_START");
-            break;
-        default:
-            break;
+    case eb::ButtonEvent::CLICK:
+        Serial.println("CLICK");
+        break;
+    case eb::ButtonEvent::DOUBLE_CLICK:
+        Serial.println("DOUBLE_CLICK");
+        break;
+    case eb::ButtonEvent::LONG_CLICK:
+        Serial.println("LONG_CLICK");
+        break;
+    
+    default:
+        break;
     }
+
+    // buttonEvent = button.getEvent();
+    
+    // switch (buttonEvent)
+    // {
+    //     case eb::ButtonEvent::PRESSED:
+    //         Serial.println("PRESSED");
+    //         break;
+    //     case eb::ButtonEvent::RELEASED:
+    //         Serial.println("RELEASED");
+    //         break;
+    //     case eb::ButtonEvent::HELD_START:
+    //         Serial.println("HELD_START");
+    //         break;
+    //     default:
+    //         break;
+    // }
     // switch (button.getState())
     // {
     //     case eb::ButtonState::UP:
@@ -54,4 +70,5 @@ void loop()
     //     default:
     //         break;
     // }
+    
 }
