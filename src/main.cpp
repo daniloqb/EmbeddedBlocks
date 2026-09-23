@@ -6,6 +6,20 @@ eb::Button button(2);
 
 eb::ButtonEvent buttonEvent;
 
+bool toggleState = true;
+
+void setLed(bool state)
+{
+    if (state)
+    {
+        led.on();
+    }
+    else
+    {
+        led.off();
+    }
+}
+
 void setup()
 {
     led.begin();
@@ -17,6 +31,7 @@ void setup()
     button.begin();
 
     Serial.begin(9600);
+    setLed(true);
 }
 
 void loop()
@@ -27,13 +42,11 @@ void loop()
     switch ((buttonEvent))
     {
     case eb::ButtonEvent::CLICK:
-        Serial.println("CLICK");
+        toggleState = !toggleState;
+        setLed(toggleState);
         break;
     case eb::ButtonEvent::DOUBLE_CLICK:
-        Serial.println("DOUBLE_CLICK");
-        break;
-    case eb::ButtonEvent::LONG_CLICK:
-        Serial.println("LONG_CLICK");
+        led.randomHue();
         break;
     
     default:
