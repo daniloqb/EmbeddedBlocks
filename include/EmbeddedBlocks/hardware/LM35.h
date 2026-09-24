@@ -7,14 +7,14 @@ namespace eb
     class LM35 : public TemperatureSensor
     {
     public:
-        LM35(AnalogInput& analogInput);
+        explicit LM35(AnalogInput& analogInput);
         void begin() override;
         void update() override;
-        uint32_t getMillivolts() const;
+        float getMillivolts() const;
+
 
     private:
-        AnalogInput m_analogInput;
-        uint32_t m_milivolts = 0;
+        AnalogInput& m_analogInput;
     };
 
 } // namespace eb

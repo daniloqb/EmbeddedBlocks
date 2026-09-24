@@ -6,6 +6,7 @@ eb::LM35 lm35(analogInput);
 
 void setup()
 {
+    analogInput.setSamplesPerUpdate(10);
     lm35.begin();
     Serial.begin(9600);
 }
