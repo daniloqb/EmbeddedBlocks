@@ -1,87 +1,23 @@
 #include <Arduino.h>
 #include <EmbeddedBlocks.h>
 
-eb::LedRGB led(9, 10, 11);
-eb::Button button(2);
-
-eb::ButtonEvent buttonEvent;
-
-bool toggleState = true;
-
-void setLed(bool state)
-{
-    if (state)
-    {
-        led.on();
-    }
-    else
-    {
-        led.off();
-    }
-}
+eb::AnalogInput analogInput(A0);
+eb::LM35 lm35(analogInput);
 
 void setup()
 {
-    led.begin();
-    led.setHue(0);
-    led.on();
-    led.setBrightness(100);
-    led.setSaturation(100);
-
-    button.begin();
-
+    lm35.begin();
     Serial.begin(9600);
-    setLed(true);
 }
 
 void loop()
 {
+    lm35.update();
+    float temperatureC = lm35.getTemperatureCelsius();
+    Serial.print(temperatureC);
+    Serial.print("(C): ");
 
-    button.update();
-    buttonEvent = button.getGestureEvent();
-    switch ((buttonEvent))
-    {
-    case eb::ButtonEvent::CLICK:
-        toggleState = !toggleState;
-        setLed(toggleState);
-        break;
-    case eb::ButtonEvent::DOUBLE_CLICK:
-        led.randomHue();
-        break;
-    
-    default:
-        break;
-    }
-
-    // buttonEvent = button.getEvent();
-    
-    // switch (buttonEvent)
-    // {
-    //     case eb::ButtonEvent::PRESSED:
-    //         Serial.println("PRESSED");
-    //         break;
-    //     case eb::ButtonEvent::RELEASED:
-    //         Serial.println("RELEASED");
-    //         break;
-    //     case eb::ButtonEvent::HELD_START:
-    //         Serial.println("HELD_START");
-    //         break;
-    //     default:
-    //         break;
-    // }
-    // switch (button.getState())
-    // {
-    //     case eb::ButtonState::UP:
-    //         Serial.println("UP");
-    //         break;
-    //     case eb::ButtonState::DOWN:
-    //         Serial.println("DOWN");
-    //         break;
-    //     case eb::ButtonState::HELD:
-    //         Serial.println("HELD");
-    //         break;
-    //     default:
-    //         break;
-    // }
-    
+    Serial.print(lm35.getMillivolts());
+    Serial.println("mV");
+    delay(1000);
 }
